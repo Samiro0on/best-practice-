@@ -153,7 +153,6 @@ class Graph:
         queue = [start]
         lvl = {}
         sol = [goal]
-
         while queue:
             node = queue.pop(0)
             if node not in BFS:
@@ -179,6 +178,65 @@ class Graph:
                                         sol.insert(0, k)
         return False
 
+
+    def DFS(self, start, goal):
+        graph = self.__graph_dict
+        if start == goal:
+            return "That was easy! Start = goal"
+        path = []
+        stack = [start]
+
+        while stack:
+            node = stack.pop(0)
+            if node not in path:
+                path.append(node)
+                if path[-1] == goal:
+                    return path
+                val = list(graph[node])
+                for n in reversed(val):
+                    if n not in path:
+                        stack.insert(0, n)
+        return path
+
+    def DFS_distance(self, path):
+        distance = 0
+        for xtimes in range(len(path)-1):
+            distance += self.__graph_dict[path[xtimes]][path[xtimes+1]]
+            # error hna if parent mesh bt3haa hegeeb l distance ezay
+            # print("d = ", distance)
+        return distance
+
+
+    def dijkstra_SPT(self, start):
+        graph = self.__graph_dict
+        unvisited_nodes = list(graph.keys())
+        visited_nodes = []
+        path = [start]
+        possibility = {}
+        distance = 0
+        cost =[0]
+        while unvisited_nodes:
+            node = unvisited_nodes.pop(0)
+            if node not in visited_nodes:
+                visited_nodes.append(node)
+
+            for k, v in graph[path[-1]].items():
+                if k not in visited_nodes:
+                    possibility[k] = v + distance
+            # print("poss", possibility)
+            for k, v in possibility.items():
+                if v == min(possibility.values()):
+                    distance = v
+                    cost.append(distance)
+                    path.append(k)
+                    # possibility.pop(k)
+                    # print("path", path)
+
+            del possibility[path[-1]]
+            # print("new poss", possibility)
+
+            if len(path) == len(list(graph.keys())):
+                return path, cost
 
 
 if __name__ == "__main__":
@@ -219,7 +277,18 @@ if __name__ == "__main__":
     print("the steps are", p)
     print("distance =", d, "KM")
 
+    print(myGraph.DFS('a', 'e'))
+    print(yourGraph.DFS("Frankfurt", 'Stuttgart'))
+    # p = yourGraph.DFS("Frankfurt", 'Stuttgart')
+    # print(yourGraph.DFS_distance(path= p))
 
+    print(yourGraph.nodes())
+
+
+    print(yourGraph.find_Apath("Frankfurt", "Augsburg"))
+    print(yourGraph.find_All_paths("Frankfurt", "Augsburg"))
+    print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+    print(yourGraph.dijkstra_SPT('Frankfurt'))
 
 # def get_edges(graph):
 #     edges = []
@@ -230,5 +299,4 @@ if __name__ == "__main__":
 #     return edges
 
 # print(get_edges(graph))
-
 
